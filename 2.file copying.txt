@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void copyFile(const char *sourceFile, const char *destinationFile) {
+    FILE *source, *destination;
+    char buffer[1024];
+    size_t bytesRead;
+
+    // Open source file in binary mode
+    source = fopen(sourceFile, "rb");
+    if (source == NULL) {
+        printf("Error: Cannot open source file %s\n", sourceFile);
+        exit(1);
+    }
+
+    // Open destination file in binary mode
+    destination = fopen(destinationFile, "wb");
+    if (destination == NULL) {
+        printf("Error: Cannot open destination file %s\n", destinationFile);
+        fclose(source);
+        exit(1);
+    }
+
+    // Copy contents using buffer
+    while ((bytesRead = fread(buffer, 1, sizeof(buffer), source)) > 0) {
+        fwrite(buffer, 1, bytesRead, destination);
+    }
+
+    printf("File copied successfully from '%s' to '%s'.\n", sourceFile, destinationFile);
+
+    // Close files
+    fclose(source);
+    fclose(destination);
+}
+
+int main() {
+    char sourceFile[256], destinationFile[256];
+
+    // Get file names from user
+    printf("Enter the source file name: ");
+    fgets(sourceFile, sizeof(sourceFile), stdin);
+    printf("Enter the destination file name: ");
+    fgets(destinationFile, sizeof(destinationFile), stdin);
+
+    // Remove newline characters if present
+    sourceFile[strcspn(sourceFile, "\n")] = 0;
+    destinationFile[strcspn(destinationFile, "\n")] = 0;
+
+    // Call copy function
+    copyFile(sourceFile, destinationFile);
+
+    return 0;
+}

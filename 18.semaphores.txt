@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SIZE 5
+
+int buffer[SIZE];
+int in = 0, out = 0;
+
+// Semaphore variables
+int mutex = 1;
+int empty = SIZE;
+int full = 0;
+
+// Wait operation
+void wait(int *s) {
+    (*s)--;
+}
+
+// Signal operation
+void signal(int *s) {
+    (*s)++;
+}
+
+void producer() {
+    int item;
+
+    if (empty == 0) {
+        printf("Buffer is Full!\n");
+        return;
+    }
+
+    printf("Enter item to produce: ");
+    scanf("%d", &item);
+
+    wait(&empty);
+    wait(&mutex);
+
+    buffer[in] = item;
+    printf("Produced: %d\n", item);
+    in = (in + 1) % SIZE;
+
+    signal(&mutex);
+    signal(&full);
+}
+
+void consumer() {
+    int item;
+
+    if (full == 0) {
+        printf("Buffer is Empty!\n");
+        return;
+    }
+
+    wait(&full);
+    wait(&mutex);
+
+    item = buffer[out];
+    printf("Consumed: %d\n", item);
+    out = (out + 1) % SIZE;
+
+    signal(&mutex);
+    signal(&empty);
+}
+
+int main() {
+    int choice;
+
+    while (1) {
+        printf("\n--- Producer Consumer Menu ---\n");
+        printf("1. Produce\n");
+        printf("2. Consume\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                producer();
+                break;
+
+            case 2:
+                consumer();
+                break;
+
+            case 3:
+                exit(0);
+
+            default:
+                printf("Invalid Choice!\n");
+        }
+    }
+
+    return 0;
+}

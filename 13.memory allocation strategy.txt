@@ -1,0 +1,23 @@
+#include<stdio.h>
+
+int main()
+{
+    int block[3]={100,500,200};
+    int process[3]={90,150,100};
+    int i,j;
+
+    for(i=0;i<3;i++)
+    {
+        for(j=0;j<3;j++)
+        {
+            if(process[i]<=block[j])
+            {
+                printf("Process %d allocated to block %d\n",i+1,j+1);
+                block[j]-=process[i];
+                break;
+            }
+        }
+    }
+
+    return 0;
+}

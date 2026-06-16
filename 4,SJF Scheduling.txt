@@ -1,0 +1,77 @@
+#include <stdio.h>
+
+// Function to implement SJF Scheduling
+void sjf(int p[], int a[], int b[], int n) 
+{
+    int w[n], t[n], tw = 0, tt = 0, time = 0, completed = 0;
+    int isCompleted[n]; // Track completed processes
+    for (int i = 0; i < n; i++) isCompleted[i] = 0;
+
+    printf("\nExecution Order:\n");
+
+    while (completed < n) {
+        int min = -1;
+        for (int j = 0; j < n; j++) {
+            if (!isCompleted[j] && a[j] <= time) {
+                if (min == -1 || b[j] < b[min])
+                    min = j;
+            }
+        }
+
+        if (min == -1) {
+            time++; // If no process is available, increment time
+            continue;
+        }
+
+        // Process Execution
+        printf("P%d ", p[min]);
+        time += b[min];
+        t[min] = time - a[min];  // Turnaround time
+        w[min] = t[min] - b[min]; // Waiting time
+
+        tw += w[min];
+        tt += t[min];
+        isCompleted[min] = 1;
+        completed++;
+    }
+
+    // Display Results
+    printf("\n\nProcess Table:\n");
+    printf("-----------------------------------\n");
+    printf("| P  | AT  | BT  | WT  | TAT  |\n");
+    printf("-----------------------------------\n");
+    for (int i = 0; i < n; i++)
+        printf("| P%-2d | %-3d | %-3d | %-3d | %-3d  |\n", p[i], a[i], b[i], w[i], t[i]);
+    printf("-----------------------------------\n");
+
+    // Average Waiting Time & Turnaround Time
+    printf("\nAverage Waiting Time: %.2f", (float)tw / n);
+    printf("\nAverage Turnaround Time: %.2f\n", (float)tt / n);
+}
+
+int main() {
+    int n;
+
+    // Input: Number of processes
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+    if (n <= 0) {
+        printf("Invalid number of processes! Exiting...\n");
+        return 1;
+    }
+
+    int p[n], a[n], b[n];
+
+    // Input: Arrival Time & Burst Time
+    printf("Enter Arrival Time and Burst Time for each process:\n");
+    for (int i = 0; i < n; i++) {
+        p[i] = i + 1;
+        printf("Process %d: ", p[i]);
+        scanf("%d %d", &a[i], &b[i]);
+    }
+
+    // Run SJF Scheduling Algorithm
+    sjf(p, a, b, n);
+
+    return 0;
+}

@@ -1,0 +1,20 @@
+#include<stdio.h>
+
+int main()
+{
+    int n,i;
+    char file[10][20];
+
+    printf("No. of files: ");
+    scanf("%d",&n);
+
+    for(i=0;i<n;i++)
+        scanf("%s",file[i]);
+
+    printf("Files are:\n");
+
+    for(i=0;i<n;i++)
+        printf("%s\n",file[i]);
+
+    return 0;
+}

@@ -1,0 +1,86 @@
+#include <stdio.h>
+#define MAX 10
+
+// Function to implement Preemptive Priority Scheduling
+void preemptivePriority(int at[], int bt[], int pr[], int n) {
+    int rt[MAX], wt[MAX], ct[MAX], tat[MAX], completed = 0, time = 0;
+    int min_index, total_wt = 0, total_tat = 0;
+
+    for (int i = 0; i < n; i++) {
+        rt[i] = bt[i];  // Copy burst time to remaining time
+    }
+
+    printf("\nExecution Order:\n");
+
+    while (completed < n) {
+        min_index = -1;
+        for (int i = 0; i < n; i++) {
+            if (at[i] <= time && rt[i] > 0) {
+                if (min_index == -1 || pr[i] < pr[min_index]) {
+                    min_index = i;
+                }
+            }
+        }
+
+        if (min_index == -1) {
+            time++; // If no process is available, increment time
+            continue;
+        }
+
+        // Execute the selected process for 1 unit time
+        printf("P%d ", min_index + 1);
+        rt[min_index]--;
+
+        // If process completes execution
+        if (rt[min_index] == 0) {
+            completed++;
+            ct[min_index] = time + 1;
+            tat[min_index] = ct[min_index] - at[min_index];  // Turnaround time
+            wt[min_index] = tat[min_index] - bt[min_index];  // Waiting time
+
+            total_wt += wt[min_index];
+            total_tat += tat[min_index];
+        }
+
+        time++;
+    }
+
+    // Display Results
+    printf("\n\nProcess Table:\n");
+    printf("------------------------------------------------------\n");
+    printf("| P  | AT  | BT  | PR  | CT  | TAT  | WT  |\n");
+    printf("------------------------------------------------------\n");
+    for (int i = 0; i < n; i++) {
+        printf("| P%-2d | %-3d | %-3d | %-3d | %-3d | %-3d  | %-3d  |\n", 
+                i + 1, at[i], bt[i], pr[i], ct[i], tat[i], wt[i]);
+    }
+    printf("------------------------------------------------------\n");
+
+    // Average Waiting Time & Turnaround Time
+    printf("\nAverage Waiting Time: %.2f", (float)total_wt / n);
+    printf("\nAverage Turnaround Time: %.2f\n", (float)total_tat / n);
+}
+
+int main() {
+    int n, at[MAX], bt[MAX], pr[MAX];
+
+    // Input: Number of processes
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+
+    if (n <= 0) {
+        printf("Invalid number of processes! Exiting...\n");
+        return 1;
+    }
+
+    // Input: Arrival Time, Burst Time, Priority
+    for (int i = 0; i < n; i++) {
+        printf("Enter arrival time, burst time, and priority for process %d: ", i + 1);
+        scanf("%d %d %d", &at[i], &bt[i], &pr[i]);
+    }
+
+    // Run Preemptive Priority Scheduling
+    preemptivePriority(at, bt, pr, n);
+
+    return 0;
+}
